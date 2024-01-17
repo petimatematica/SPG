@@ -24,6 +24,7 @@ function spg(x, f, gradf, projf, alpha_min, alpha_max, epsilon, eta, M, maxiter,
     sigma1 = 0.1
     sigma2 = 0.9
 
+    
     while true
         
         fx = f(x)
@@ -34,9 +35,12 @@ function spg(x, f, gradf, projf, alpha_min, alpha_max, epsilon, eta, M, maxiter,
         push!(Gnorm, normgradfx)
 
         proj_grad_fk = projf(x - gradfx)
-    
-        alpha = min(alpha_max, max(alpha_min, 1.0 / norm(proj_grad_fk - x)))
         
+        # Compute spectral steplength
+        #if iter==0
+        #alpha = min(alpha_max, max(alpha_min, 1.0 / norm(proj_grad_fk - x)))
+        #end
+
         distance = norm(proj_grad_fk - x)
         # Verifies if convergence was achieved
         if distance ≤ epsilon
@@ -66,10 +70,16 @@ function spg(x, f, gradf, projf, alpha_min, alpha_max, epsilon, eta, M, maxiter,
             et = time() - t0
             return(x,ierror,info,et,seqx)
         end
-
+        
          # Update sequence
-         (alpha,iet) = linesearch(x, f, gradfx, projf, eta, fx, sigma1, sigma2)
+        if iter == 1
+            (alpha,iet) = linesearch(x, f, gradfx, projf, eta, fx, sigma1, sigma2, alpha_min, alpha_max, fvals, M, iter, seqx[end])
          push!(stplen,alpha)
+        else
+            (alpha,iet) = linesearch(x, f, gradfx, projf, eta, fx, sigma1, sigma2, alpha_min, alpha_max, fvals, M, iter, seqx[:, end-1])
+            push!(stplen,alpha)
+        end
+         
 
         xnproj = x - alpha * gradfx
         newx = projf(x - alpha * gradfx)
@@ -78,17 +88,6 @@ function spg(x, f, gradf, projf, alpha_min, alpha_max, epsilon, eta, M, maxiter,
         x=newx
 
         seqx=[seqx x];
-        
-        # Calculate new direction
-        sk = newx - x
-        yk = gradf(newx) - gradfx
-        
-        # Update alpha for the next iteration
-        if dot(sk, yk) ≤ 0
-            alpha = alpha_max
-        else
-            alpha = min(alpha_max, max(alpha_min, dot(sk, sk) / dot(sk, yk)))
-        end
     end
 
 end
