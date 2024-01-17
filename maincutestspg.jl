@@ -7,9 +7,13 @@ include("grippolampariellolucidi.jl");
 
 using LinearAlgebra, DataFrames, Random, Printf, Plots, CUTEst, NLPModels
 
-nlp=CUTEstModel("PRICE3")
+#nlp=CUTEstModel("PRICE3")
 
-x0 = [1.0; 2.0]
+nlp=CUTEstModel("ROSENBR")
+
+#x0 = [1.0; 2.0]
+
+x0 = nlp.meta.x0
 
 function f(x)
     return obj(nlp,x)
@@ -37,6 +41,8 @@ function projf(x)
     return px
 end
 
-(x,ierror,info,etime,seqx) = spg(x0, f, gradf, projf, 1.e-30, 1.e+30, 1.e-6, 1.e-4, 1, 100, gll)
+(x,ierror,info,etime,seqx) = spg(x0, f, gradf, projf, 1.e-30, 1.e+30, 1.e-6, 1.e-4, 5, 30000, gll)
+
+println("$info")
 
 finalize(nlp)

@@ -66,9 +66,8 @@ function spg(x, f, gradf, projf, alpha_min, alpha_max, epsilon, eta, M, maxiter,
             et = time() - t0
             return(x,ierror,info,et,seqx)
         end
-
          # Update sequence
-         (alpha,iet) = linesearch(x, f, gradfx, projf, eta, fx, sigma1, sigma2)
+         (alpha,iet) = linesearch(x, f, gradfx, projf, eta, fx, sigma1, sigma2,fvals,M,iter)
          push!(stplen,alpha)
 
         xnproj = x - alpha * gradfx
