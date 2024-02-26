@@ -5,7 +5,7 @@ using CUTEst, NLPModels, LinearAlgebra
 include("spg.jl")
 
 # Loading objective function from CUTEst
-nlp = CUTEstModel("CVXBQP1", "-param", "N=10000")
+nlp = CUTEstModel("BQPGABIM", "-param", "N=50")
 
 # Initial guess from CUTEst
 x0 = nlp.meta.x0
@@ -55,7 +55,7 @@ M = 10
 sigma1 = 0.1
 sigma2 = 0.9
 gamma = 1.e-4
-linesearch = backtracking1
+linesearch = backtracking2
 
 sol,error = spg()
 
