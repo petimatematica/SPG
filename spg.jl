@@ -85,9 +85,46 @@ end
 
 
 #
+# Backtrackin routine avarege
+#
+function backtracking2(k,alpha_k,x_k,gradf_x_k,f_hist)
+    lambda = copy(alpha_k)
+
+    while true
+        x_plus = proj(x_k - lambda * gradf_x_k)
+        #println("$x_plus")
+        m_k = min(k-1,M-1)
+        f_med = sum(f_hist[end-m_k:end])/m_k
+        f_x_plus = f(x_plus)
+        test = f_x_plus > f_med + gamma * dot(x_plus - x_k,gradf_x_k)
+        if ~test
+            s_k = x_plus - x_k
+            gradf_x_kp1 = gradf(x_plus)
+            y_k = gradf_x_kp1 - gradf_x_k
+            push!(f_hist,f_x_plus)
+            return x_plus,gradf_x_kp1,s_k,y_k,f_hist
+        else
+            fxx = f(x_k + lambda * (x_plus - x_k))
+            #lambda = lambda / 2.0 
+            if lambda <= 0.1
+                lambda = lambda / 2.0
+            else
+                atemp = (- dot(x_plus - x_k,gradf_x_k) * lambda^2) / (2.0 * (fxx - f(x_k) - lambda * dot(x_plus - x_k,gradf_x_k)))
+                #if atemp < sigma1 *lambda || atemp > sigma2 * lambda
+                if atemp < sigma1 || atemp > sigma2 * lambda
+                    atemp = lambda / 2.0
+                end
+                lambda = atemp
+            end
+        end 
+    end
+end
+
+
+#
 # Backtrackin routine Armijo
 #
-function backtracking2(k, alpha_k, x_k, gradf_x_k, f_hist)
+function armijo(k, alpha_k, x_k, gradf_x_k, f_hist)
     #lambda = 1.0 
     lambda = copy(alpha_k)
 
