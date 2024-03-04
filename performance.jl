@@ -11,29 +11,10 @@ V = Float64[]
 T = Float64[]
 S = Float64[]
 
-# Defina uma matriz de nomes de problemas CUTEst
-#problems = ["BDEXP", "EXPLIN", "EXPLIN2", "EXPQUAD", "PROBPENL", "S368",
-#"HADAMALS", "LINVERSE", "NONSCOMP",
-#"TORSION1","TORSION2","TORSION3","TORSION4","TORSION5","TORSION6",
-#"TORSIONA","TORSIONB","TORSIONC","TORSIOND","TORSIONE","TORSIONF"]
+problems1 = CUTEst.select(objtype="quadratic", contype="bounds")#, custom_filter=custom_filter)
+problems2 = CUTEst.select(objtype = "sum_of_squares", contype = "bounds")#, custom_filter=custom_filter)
 
-#dimension = ["5000", "120", "120", "120", "500", "100",
-#"1024", "1999", "10000",
-#"14884", "14884", "14884", "14884", "14884", "14884", 
-#"14884", "14884", "14884", "14884", "14884", "14884"]
-
-# Defina uma matriz de nomes de problemas CUTEst
-#problems = ["TORSION1","TORSION2","TORSION3","TORSION4","TORSION5","TORSION6",
-#"TORSIONA","TORSIONB","TORSIONC","TORSIOND","TORSIONE","TORSIONF"]
-
-#dimension = ["14884", "14884", "14884", "14884", "14884", "14884",
-#"14884", "14884", "14884", "14884", "14884", "14884"]
-
-#custom_filter = x -> x["origin"] == "real"
-#custom_filter = x -> x["origin"] == "academic"
-custom_filter = x -> x["origin"] == "modelling"
-#problems = CUTEst.select(objtype="quadratic", contype="bounds", custom_filter=custom_filter)
-problems = CUTEst.select(objtype = "sum_of_squares", contype = "bounds", custom_filter=custom_filter)
+problems = vcat(problems1, problems2)
 
 for B in 1:2 
     if B == 1 
@@ -131,6 +112,14 @@ colors=[:royalblue1, :green2]
 X = performance_profile(PlotsBackend(), W, ["SPG1", "SPG2"], xlabel="Performance ratio: # iterations", ylabel="Solved problems [%]", legend=:bottomright, palette=colors, lw=2, dpi=1000)
 Y = performance_profile(PlotsBackend(), Z, ["SPG1", "SPG2"], xlabel="CPU time ratio", ylabel="Solved problems [%]", legend=:bottomright, palette=colors, lw=2, dpi=1000)
 Q = performance_profile(PlotsBackend(), R, ["SPG1", "SPG2"], xlabel="Function evaluation", ylabel="Solved problems [%]", legend=:bottomright, palette=colors, lw=2, dpi=1000)
+
+plot(X)
+
+savefig("performanceprofileiters")
+
+plot(Y)
+
+savefig("performanceprofiletime")
 
 plot(Q)
 
