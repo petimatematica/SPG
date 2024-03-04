@@ -11,10 +11,34 @@ V = Float64[]
 T = Float64[]
 S = Float64[]
 
-problems1 = CUTEst.select(objtype="quadratic", contype="bounds")#, custom_filter=custom_filter)
-problems2 = CUTEst.select(objtype = "sum_of_squares", contype = "bounds")#, custom_filter=custom_filter)
+# Defina uma matriz de nomes de problemas CUTEst
+problems = ["BDEXP", "EXPLIN", "EXPLIN2"]#, "EXPQUAD", "PROBPENL", "S368",
+#"HADAMALS", "LINVERSE", "NONSCOMP",
+#"TORSION1","TORSION2","TORSION3","TORSION4","TORSION5","TORSION6",
+#"TORSIONA","TORSIONB","TORSIONC","TORSIOND","TORSIONE","TORSIONF"]
 
-problems = vcat(problems1, problems2)
+dimension = ["5000", "120", "120"]#, "120", "500", "100",
+#"1024", "1999", "10000",
+#"14884", "14884", "14884", "14884", "14884", "14884", 
+#"14884", "14884", "14884", "14884", "14884", "14884"]
+
+# Defina uma matriz de nomes de problemas CUTEst
+#problems = ["TORSION1","TORSION2","TORSION3","TORSION4","TORSION5","TORSION6",
+#"TORSIONA","TORSIONB","TORSIONC","TORSIOND","TORSIONE","TORSIONF"]
+
+#dimension = ["14884", "14884", "14884", "14884", "14884", "14884",
+#"14884", "14884", "14884", "14884", "14884", "14884"]
+
+#custom_filter = x -> x["origin"] == "real"
+#custom_filter = x -> x["origin"] == "academic"
+#custom_filter = x -> x["origin"] == "modelling"
+#problems = CUTEst.select(objtype="quadratic", contype="bounds", custom_filter=custom_filter)
+#problems = CUTEst.select(objtype = "sum_of_squares", contype = "bounds", custom_filter=custom_filter)
+
+#problems1 = CUTEst.select(objtype="quadratic", contype="bounds")#, custom_filter=custom_filter)
+#problems2 = CUTEst.select(objtype = "sum_of_squares", contype = "bounds")#, custom_filter=custom_filter)
+
+#problems = vcat(problems1, problems2)
 
 for B in 1:2 
     if B == 1 
@@ -27,10 +51,10 @@ for B in 1:2
         linesearch = backtracking2
     end
 
-    for i in 1:length(problems)
+    for ip in 1:length(problems)
 
         # Inicialize um vetor de modelos CUTEst
-        nlp = CUTEstModel(problems[i])#, "-param", "N="*dimension[i])
+        nlp = CUTEstModel(problems[ip])#, "-param", "N="*dimension[i])
     
         # Initial guess from CUTEst
         x0 = nlp.meta.x0
@@ -82,9 +106,12 @@ for B in 1:2
         sigma2 = 0.9
         gamma = 1.e-4
 
+        println(problems[ip])
+        println(length(x0))
+        
         (x,error,info,seqx,etime,evalf) = spgperformance(x0, f, gradf, proj, tol, maxiter, alpha_min, alpha_max, M, sigma1, sigma2, gamma, linesearch);
         
-        filename = "echo/" * sproblem * string(i) * Ls * ".jld2"
+        filename = "echo/" * sproblem * string(ip) * Ls * ".jld2"
         @save filename info 
 
         if error > 0
