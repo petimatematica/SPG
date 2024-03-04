@@ -10,7 +10,7 @@ function spgperformance(x0, f, gradf, proj, tol, maxiter, alpha_min, alpha_max, 
     info = DataFrame()
 
     f_hist = Float64[]
-    feval = Float64[]
+    feval = Int64[]
 
     x = copy(x0)
     seqx=x
@@ -123,6 +123,7 @@ function backtracking1(k,alpha_k,x_k,gradf_x_k,f_hist, M, sigma1, sigma2, gamma)
         m_k = min(k-1,M-1)
         f_max = maximum(f_hist[end-m_k:end])
         f_x_plus = f(x_plus)
+        evalf += 1  # Increment evalf counter
         test = f_x_plus > f_max + gamma * dot(x_plus - x_k,gradf_x_k)
         if ~test
             s_k = x_plus - x_k
@@ -130,15 +131,15 @@ function backtracking1(k,alpha_k,x_k,gradf_x_k,f_hist, M, sigma1, sigma2, gamma)
             y_k = gradf_x_kp1 - gradf_x_k
             push!(f_hist,f_x_plus)
             et = time() - t0
-            evalf += 1  # Increment evalf counter
             return (x_plus,gradf_x_kp1,s_k,y_k,f_hist,lambda,et,evalf)
         else
             fxx = f(x_k + lambda * (x_plus - x_k))
+            evalf += 1  # Increment evalf counter
             #lambda = lambda / 2.0 
             if lambda <= 0.1
                 lambda = lambda / 2.0
             else
-                atemp = (- dot(x_plus - x_k,gradf_x_k) * lambda^2) / (2.0 * (fxx - f(x_k) - lambda * dot(x_plus - x_k,gradf_x_k)))
+                atemp = (- dot(x_plus - x_k,gradf_x_k) * lambda^2) / (2.0 * (fxx - f_hist[end] - lambda * dot(x_plus - x_k,gradf_x_k)))
                 #if atemp < sigma1 *lambda || atemp > sigma2 * lambda
                 if atemp < sigma1 || atemp > sigma2 * lambda
                     atemp = lambda / 2.0
@@ -165,6 +166,7 @@ function backtracking2(k,alpha_k,x_k,gradf_x_k,f_hist, M, sigma1, sigma2, gamma)
         m_k = min(k-1,M-1)
         f_max = maximum(f_hist[end-m_k:end])
         f_x_plus = f(x_plus)
+        evalf += 1  # Increment evalf counter
         test = f_x_plus > f_max + gamma * lambda * dot(d_k,gradf_x_k)
         if ~test
             s_k = x_plus - x_k
@@ -172,15 +174,15 @@ function backtracking2(k,alpha_k,x_k,gradf_x_k,f_hist, M, sigma1, sigma2, gamma)
             y_k = gradf_x_kp1 - gradf_x_k
             push!(f_hist,f_x_plus)
             et = time() - t0
-            evalf += 1  # Increment evalf counter
             return (x_plus,gradf_x_kp1,s_k,y_k,f_hist,lambda,et,evalf)
         else
             fxx = f(x_k + lambda * (x_plus - x_k))
+            evalf += 1  # Increment evalf counter
             #lambda = lambda / 2.0 
             if lambda <= 0.1
                 lambda = lambda / 2.0
             else
-                atemp = (- dot(x_plus - x_k,gradf_x_k) * lambda^2) / (2.0 * (fxx - f(x_k) - lambda * dot(x_plus - x_k,gradf_x_k)))
+                atemp = (- dot(x_plus - x_k,gradf_x_k) * lambda^2) / (2.0 * (fxx - f_hist[end] - lambda * dot(x_plus - x_k,gradf_x_k)))
                 #if atemp < sigma1 *lambda || atemp > sigma2 * lambda
                 if atemp < sigma1 || atemp > sigma2 * lambda
                     atemp = lambda / 2.0
