@@ -12,12 +12,12 @@ T = Float64[]
 S = Float64[]
 
 # Defina uma matriz de nomes de problemas CUTEst
-problems = ["BDEXP", "EXPLIN", "EXPLIN2"]#, "EXPQUAD", "PROBPENL", "S368",
+#problems = ["BDEXP", "EXPLIN", "EXPLIN2"]#, "EXPQUAD", "PROBPENL", "S368",
 #"HADAMALS", "LINVERSE", "NONSCOMP",
 #"TORSION1","TORSION2","TORSION3","TORSION4","TORSION5","TORSION6",
 #"TORSIONA","TORSIONB","TORSIONC","TORSIOND","TORSIONE","TORSIONF"]
 
-dimension = ["5000", "120", "120"]#, "120", "500", "100",
+#dimension = ["5000", "120", "120"]#, "120", "500", "100",
 #"1024", "1999", "10000",
 #"14884", "14884", "14884", "14884", "14884", "14884", 
 #"14884", "14884", "14884", "14884", "14884", "14884"]
@@ -35,10 +35,10 @@ dimension = ["5000", "120", "120"]#, "120", "500", "100",
 #problems = CUTEst.select(objtype="quadratic", contype="bounds", custom_filter=custom_filter)
 #problems = CUTEst.select(objtype = "sum_of_squares", contype = "bounds", custom_filter=custom_filter)
 
-#problems1 = CUTEst.select(objtype="quadratic", contype="bounds")#, custom_filter=custom_filter)
-#problems2 = CUTEst.select(objtype = "sum_of_squares", contype = "bounds")#, custom_filter=custom_filter)
+problems1 = CUTEst.select(objtype="quadratic", contype="bounds")#, custom_filter=custom_filter)
+problems2 = CUTEst.select(objtype = "sum_of_squares", contype = "bounds")#, custom_filter=custom_filter)
 
-#problems = vcat(problems1, problems2)
+problems = vcat(problems1, problems2)
 
 for B in 1:2 
     if B == 1 
