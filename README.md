@@ -33,9 +33,6 @@ Parameters such as problem names, dimensions, and solver settings are initialize
 ## Optimization Cycle:
 For each problem, the script initializes the problem using CUTEst, defines the objective function and its gradient, and sets upper and lower bounds. The SPG method is then called with the specified parameters, and optimization is performed. Information about the optimization process is saved to a JLD2 file.
 
-## Performance Measurement:
-The number of iterations, CPU time, and function evaluations are recorded for each problem and SPG variant. If an error occurs during optimization.
-
 ## Performance Profiles:
 Performance profiles are generated based on the collected data. Profiles illustrate the percentage of solved problems as a function of the number of iterations, CPU time ratio, and function evaluations. Profiles are saved as images (performanceprofileiters.png, performanceprofiletime.png, performanceprofileevalf.png).
 
