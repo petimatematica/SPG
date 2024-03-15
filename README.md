@@ -23,13 +23,71 @@ The function returns the minimization point, an error indicator, optimization in
 Functions spg1 and spg2:
 Implement backtracking routines for the SPG method. They take the same parameters as the spg function, except for the linesearch parameter. Each function returns the next point, the gradient at that point, the direction, a history of function values, the step size, elapsed time, and the number of objective function evaluations.
 
-Function spg1:
-This function implements the backtracking routine for the SPG method with a specific update rule for the step size. It adjusts the step size based on a condition involving the function values at the current and the next points.
+## Linesearch of Grippo, Lampariello and Lucidi (GLL) for SPG1
 
-Function spg2:
-Similar to spg1, this function also implements the backtracking routine for the SPG method but with a different update rule for the step size. It calculates the step size based on the projected gradient and a condition involving the function values.
+### Description:
+The GLL backtracking routine is responsible for selecting the step size during each iteration of the SPG optimization algorithm. It iteratively adjusts the step size until it satisfies certain conditions based on the objective function and gradient information.
 
-These functions are essential components of the SPG method and are used by the main spg function to perform optimization.
+### Parameters:
+- k (Int): Iteration index.
+- lambda_k (Float64): Current step size.
+- x_k (Vector): Current estimate of the minimizer.
+- gradf_x_k (Vector): Gradient of the objective function evaluated at the current estimate.
+- f_hist (Vector{Float64}): History of objective function values.
+- M (Int): Parameter determining the history size for backtracking.
+- sigma1 (Float64): Parameter used in the backtracking process.
+- sigma2 (Float64): Parameter used in the backtracking process.
+- gamma (Float64): Parameter used in the Armijo condition.
+
+### Output:
+- x_plus (Vector): Updated estimate of the minimizer.
+- gradf_x_kp1 (Vector): Gradient of the objective function evaluated at the updated estimate.
+- s_k (Vector): Step taken in the optimization direction.
+- y_k (Vector): Change in gradient.
+- f_hist (Vector{Float64}): Updated history of objective function values.
+- alpha (Float64): Selected step size.
+- et (Float64): Elapsed time.
+- evalf (Int): Number of objective function evaluations.
+
+### Remarks:
+The GLL backtracking routine adjusts the step size iteratively until it satisfies conditions based on the Armijo condition and other parameters.
+
+It employs a line search strategy to find an appropriate step size that ensures sufficient decrease in the objective function value.
+
+GLL is one of the variants of the backtracking routine used in the SPG optimization algorithm, offering different strategies for selecting the step size during optimization.
+
+## Linesearch of Birgin, Martínez and Raydan (BMR) for SPG2
+
+### Description:
+The BMR backtracking routine is responsible for determining the appropriate step size during each iteration of the SPG optimization algorithm. It adjusts the step size iteratively based on the objective function and gradient information until certain conditions are met.
+
+Parameters:
+- k (Int): Iteration index.
+- lambda_k (Float64): Current step size.
+- x_k (Vector): Current estimate of the minimizer.
+- gradf_x_k (Vector): Gradient of the objective function evaluated at the current estimate.
+- f_hist (Vector{Float64}): History of objective function values.
+- M (Int): Parameter determining the history size for backtracking.
+- sigma1 (Float64): Parameter used in the backtracking process.
+- sigma2 (Float64): Parameter used in the backtracking process.
+- gamma (Float64): Parameter used in the Armijo condition.
+
+### Output:
+- x_plus (Vector): Updated estimate of the minimizer.
+- gradf_x_kp1 (Vector): Gradient of the objective function evaluated at the updated estimate.
+- s_k (Vector): Step taken in the optimization direction.
+- y_k (Vector): Change in gradient.
+- f_hist (Vector{Float64}): Updated history of objective function values.
+- alpha (Float64): Selected step size.
+- et (Float64): Elapsed time.
+- evalf (Int): Number of objective function evaluations.
+
+### Remarks:
+The BMR backtracking routine adjusts the step size iteratively until it satisfies conditions based on the Armijo condition and other parameters.
+
+It employs a line search strategy to find an appropriate step size that ensures sufficient decrease in the objective function value.
+
+BMR is another variant of the backtracking routine used in the SPG optimization algorithm, providing an alternative strategy for selecting the step size during optimization.
 
 # main.jl 
 
