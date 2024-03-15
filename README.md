@@ -13,7 +13,7 @@ Implements the Spectral Projected Gradient Method (SPG). It takes the following 
 - maxiter (Int): The maximum number of iterations allowed.
 - lambda_min (Float64): The minimum value for the lambda parameter.
 - lambda_max (Float64): The maximum value for the lambda parameter.
-- M (Int): Integer number greater than zero, parameter determining the history size for backtracking.
+- M (Int): Parameter (integer number greater than zero) determining the history size for backtracking.
 - sigma1 (Float64): Parameter used in quadratic interpolation.
 - sigma2 (Float64): Parameter used in quadratic interpolation.
 - gamma (Float64): Sufficient decrease parameter.
