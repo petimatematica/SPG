@@ -1,6 +1,6 @@
 # spg.jl 
 
-This file contains the implementation of the Spectral Projected Gradient Method (SPG). Additionally, it contains the GLL and BMR non-monotone linear searches.
+This file contains the implementation of the Spectral Projected Gradient Method (SPG). Additionally, it contains the GLL and BMR nonmonotone linear searches.
 
 ## Function spg:
 Implements the Spectral Projected Gradient Method (SPG). It takes the following parameters:
