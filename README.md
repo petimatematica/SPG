@@ -5,19 +5,19 @@ This file contains the implementation of the Spectral Projected Gradient Method 
 ## Function spg:
 Implements the Spectral Projected Gradient Method (SPG). It takes the following parameters:
 
-- ** x0 (Vector): The initial point.
-- ** f (Function): The objective function to be minimized.
-- ** gradf (Function): The gradient of the objective function.
-- ** proj (Function): The projection function.
-- ** tol (Float64): The convergence tolerance.
-- ** maxiter (Int): The maximum number of iterations allowed.
-- ** lambda_min (Float64): The minimum value for the lambda parameter.
-- ** lambda_max (Float64): The maximum value for the lambda parameter.
-- ** M (Int): The value of M.
-- ** sigma1 (Float64): The value of sigma1.
-- ** sigma2 (Float64): The value of sigma2.
-- ** gamma (Float64): The value of gamma.
-- ** linesearch (Function): The line search function.
+- x0 (Vector): The initial point.
+- f (Function): The objective function to be minimized.
+- gradf (Function): The gradient of the objective function.
+- proj (Function): The projection function.
+- tol (Float64): The convergence tolerance.
+- maxiter (Int): The maximum number of iterations allowed.
+- lambda_min (Float64): The minimum value for the lambda parameter.
+- lambda_max (Float64): The maximum value for the lambda parameter.
+- M (Int): The value of M.
+- sigma1 (Float64): The value of sigma1.
+- sigma2 (Float64): The value of sigma2.
+- gamma (Float64): The value of gamma.
+- linesearch (Function): The line search function.
 The function returns the minimization point, an error indicator, optimization information, elapsed time, and the sequence of points during optimization.
 
 Functions spg1 and spg2:
