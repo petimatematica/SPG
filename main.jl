@@ -6,28 +6,38 @@ using CUTEst, NLPModels, LinearAlgebra, DataFrames, Random, Printf, Plots, Bench
 
 include("spg.jl")
 
-sproblem= "problem"
-
 V = Float64[]
 T = Float64[]
 S = Float64[]
+G = Float64[]
 
-problems = ["BDEXP", "EXPLIN", "EXPLIN2", "EXPQUAD", "PROBPENL", "S368", 
-"HADAMALS", "CHEBYQAD", "HS110", "LINVERSE", "NONSCOMP", "QR3DLS", 
-"DECONVB", "BIGGSB1", "BQPGABIM", "BQPGASIM", "JNLBRNG1", "JNLBRNGA",  
-"NCVXBQP1", "NOBNDTOR", "PENTDI", "TORSION1", "TORSION2", "TORSION3", 
-"TORSION4", "TORSION5", "TORSION6", "TORSIONA", "TORSIONB", "TORSIONC", 
-"TORSIOND", "TORSIONE", "TORSIONF"]
+# Parameters
+η = 1.e-4 
+ε = 1.e-5 
+min_step = 1.e-5
+max_iter = 15000
+lambda_min = 1.e-30
+lambda_max = 1.e+30
+M = 10
+sigma1 = 0.1
+sigma2 = 0.9
 
+problems = ["BDEXP", "EXPLIN", "EXPLIN2", "EXPQUAD", "PROBPENL", "S368",
+"HADAMALS", "NONSCOMP", "DECONVB", "BIGGSB1", "BQPGABIM", "BQPGASIM", 
+"BQPGAUSS", "JNLBRNG1", "JNLBRNG2", "JNLBRNGA", "NCVXBQP1", "NCVXBQP2",
+"NCVXBQP3", "OBSTCLAL", "OBSTCLBL", "OBSTCLBM", "OBSTCLBU", "PENTDI",
+"LINVERSE", "NOBNDTOR", "TORSION1", "TORSION2", "TORSION3", "TORSION4", 
+"TORSION5", "TORSION6", "TORSIONA", "TORSIONB", "TORSIONC", "TORSIOND", 
+"TORSIONE", "TORSIONF"]
 
-dimension = ["5000", "120", "120", "120", "500", "100",
-"1024", "50", "50", "1999", "10000", "610", 
-"61", "1000", "50", "50", "15625", "15625",
-"10000", "14884","1000", "14884", "14884", "14884",
-"14884", "14884", "14884", "14884", "14884", "14884", 
-"14884","14884", "14884"]
+dimension = ["5000", "120", "120", "120", "500", "100", 
+"1024", "10000", "63", "1000", "50", "50", 
+"2003", "10000", "10000", "10000","10000", "10000", 
+"10000", "10000", "10000", "10000", "10000", "1000",
+"1000", "61", "61", "61", "61", "61", 
+"61", "61", "61", "61", "61", "61", 
+"61", "61"] 
 
-#length(problems)
 
 for B in 1:2 
     if B == 1 
@@ -42,91 +52,93 @@ for B in 1:2
 
     for ip in 1:length(problems)
 
-        nlp = CUTEstModel(problems[ip], "-param", "N="*dimension[ip])
-    
-        # Initial guess from CUTEst
-        x0 = nlp.meta.x0
-    
-        # Objective functions from CUTEst
-        global function f(x)
-            return obj(nlp,x) 
-        end
-        
-        # Gradient of Objective function from CUTEst
-        global function gradf(x)
-            return grad(nlp,x)
-        end
-        
+             if ip in 1:24
+             nlp = CUTEstModel(problems[ip], "-param", "N="*dimension[ip])
+             elseif ip in 25:length(problems)
+                 nlp = CUTEstModel(problems[ip], "-param", "Q="*dimension[ip])
+             end
 
-        #  Upper and lower bounds seting
-        l = Array{Float64}(undef,size(x0))
-        u = Array{Float64}(undef,size(x0))
-        for i in 1 : size(x0,1)
-            global l[i] = -100.0
-            global u[i] = 50.0
-        end
-
-        # Orthogonal projection
-        global function proj(x)
-            n = size(x,1)
-            z = Array{Float64}(undef,size(x0))
-        
-            for i in 1:n
-                z[i] = max(l[i],min(x[i],u[i]))
-            end
-        
-            return z
-        end
-        
-        #  Solver parameter seting and calling
-        tol = 1.e-5
-        maxiter = 10000
-        lambda_min = 1.e-30
-        lambda_max = 1.e+30
-        M = 10
-        sigma1 = 0.1
-        sigma2 = 0.9
-        gamma = 1.e-4
-
-        println(problems[ip])
-        println(length(x0))
-
-        (x,error,info,seqx,etime,evalf) = spg(x0, f, gradf, proj, tol, maxiter, lambda_min, lambda_max, M, sigma1, sigma2, gamma, linesearch);
+            println(problems[ip])
+            println(dimension[ip])
             
-        filename = "echo/" * sproblem * string(ip) * Ls * ".jld2"
-        @save filename info 
+            # Initial guess from CUTEst
+            x0 = nlp.meta.x0
+            global x0
+        
+            # Objective functions from CUTEst
+            global function f(x)
+                return obj(nlp, x) 
+            end
+            
+            # Gradient of Objective function from CUTEst
+            global function ∇f(x)
+                return grad(nlp, x)
+            end
 
-        if error > 0
-            push!(V, Inf)
-            push!(T, Inf)
-            push!(S, Inf)
-        else
-            iters = size(seqx, 2)
-            push!(V, iters)
-            push!(T, etime)
-            push!(S, evalf)
-        end   
+            # Upper and lower bounds setting
+            l = Array{Float64}(undef,size(x0))
+            u = Array{Float64}(undef,size(x0))
+            for i in 1 : size(x0,1)
+                global l[i] = -100.0
+                global u[i] = 50.0
+            end
 
-        finalize(nlp)
-    end
+            # Orthogonal projection
+            global function proj(x)
+                n = size(x,1)
+                z = Array{Float64}(undef,size(x0))
+            
+                for i in 1:n
+                    z[i] = max(l[i],min(x[i],u[i]))
+                end
+                return z
+            end
+
+            (x,error,info,seqx,et,evalf,evalsproj) = spg(x0, f, ∇f, proj, ε, max_iter, lambda_min, lambda_max, M, sigma1, sigma2, η, linesearch)
+
+            filename = "echo/" * problems[ip] * Ls * ".jld2"
+            @save filename info 
+
+            if error > 0
+                push!(V, Inf)
+                push!(T, Inf)
+                push!(S, Inf)
+                push!(G, Inf)
+            else
+                iters = size(seqx, 2)
+                push!(V, iters)
+                push!(T, et)
+                push!(S, evalf)
+                push!(G, evalsproj)
+            end   
+
+            finalize(nlp)
+        end
 end
 
-h=length(problems);
+ENV["GKSwstype"] = "100"
+
+h = length(problems)
 W=[V[1:h] V[h+1:2h]]; #Matrix which stores iterations
 Z=[T[1:h] T[h+1:2h]]; #Matrix which stores CPU time
 R=[S[1:h] S[h+1:2h]]; #Matrix which stores function evaluation
+E=[G[1:h] G[h+1:2h]]; #Matrix which stores projection evaluation
 
-colors=[:royalblue1, :green2]
+colors=[:blue, :green2]
 
-X = performance_profile(PlotsBackend(), W, ["SPG1", "SPG2"], xlabel="Number of iterations", ylabel="Solved problems [%]", legend=:bottomright, palette=colors, lw=2, dpi=1000)
-Y = performance_profile(PlotsBackend(), Z, ["SPG1", "SPG2"], xlabel="CPU time ratio", ylabel="Solved problems [%]", legend=:bottomright, palette=colors, lw=2, dpi=1000)
-Q = performance_profile(PlotsBackend(), R, ["SPG1", "SPG2"], xlabel="Function evaluation", ylabel="Solved problems [%]", legend=:bottomright, palette=colors, lw=2, dpi=1000)
+X = performance_profile(PlotsBackend(), W, ["SPG1", "SPG2"], xlabel="Performance ratio: # iterations", ylabel="Solved problems [%]", legend=:bottomright, palette=colors, lw=1.5, dpi=1000)
+Y = performance_profile(PlotsBackend(), Z, ["SPG1", "SPG2"], xlabel="Performance ratio: CPU time", ylabel="Solved problems [%]", legend=:bottomright, palette=colors, lw=1.5, dpi=1000)
+Q = performance_profile(PlotsBackend(), R, ["SPG1", "SPG2"], xlabel="Performance ratio: # function evaluations", ylabel="Solved problems [%]", legend=:bottomright, palette=colors, lw=1.5, dpi=1000)
+N = performance_profile(PlotsBackend(), E, ["SPG1", "SPG2"], xlabel="Performance ratio: # projection evaluations", ylabel="Solved problems [%]", legend=:bottomright, palette=colors, lw=1.5, dpi=1000)
 
-plot(X)
-savefig("performanceprofileiters")
+p = plot(X)
+savefig(p, "performanceprofileiters.png") 
 
-plot(Y)
-savefig("performanceprofiletime")
+q = plot(Y)
+savefig(q,"performanceprofiletime.png")
 
-plot(Q)
-savefig("performanceprofileevalf")
+r = plot(Q)
+savefig(r,"performanceprofileevalf.png")
+
+n = plot(N)
+savefig(n,"performanceprofileevalproj.png")
