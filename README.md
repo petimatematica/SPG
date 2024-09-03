@@ -1,21 +1,20 @@
 # spg.jl 
 
-This file contains the implementation of the Spectral Projected Gradient Method (SPG). Additionally, it contains the GLL and BMR nonmonotone linear searches.
+This repository contains the implementation of the Spectral Projected Gradient Method (SPG), including two backtracking routines: SPG1 and SPG2. These routines are designed to optimize a given objective function under constraints, leveraging nonmonotone line searches for enhanced performance.
 
 ## Function spg:
 Implements the Spectral Projected Gradient Method (SPG). It takes the following parameters:
 
 - x0 (Vector): The initial point.
 - f (Function): The objective function to be minimized.
-- gradf (Function): The gradient of the objective function.
+- ∇f (Function): The gradient of the objective function.
 - proj (Function): The projection function.
-- tol (Float64): The convergence tolerance.
-- maxiter (Int): The maximum number of iterations allowed.
+- ε (Float64): The convergence tolerance.
+- max_iter (Int): The maximum number of iterations allowed.
 - lambda_min (Float64): The minimum value for the lambda parameter.
 - lambda_max (Float64): The maximum value for the lambda parameter.
-- M (Int): Parameter (integer number greater than zero) determining the history size for backtracking.
-- sigma1 (Float64): Parameter used in quadratic interpolation.
-- sigma2 (Float64): Parameter used in quadratic interpolation.
+- M (Int): History size for backtracking (must be a positive integer).
+- sigma1 (Float64) and sigma2 (Float64): Parameters for quadratic interpolation in the line search.
 - gamma (Float64): Sufficient decrease parameter.
 - linesearch (Function): The line search function.
 
