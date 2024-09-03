@@ -1,7 +1,7 @@
 #
 # Spectral Projected Gradient Method (SPG)
 #
-function spg(x0, f, ∇f, proj, ε, max_iter, lambda_min, lambda_max, M, sigma1, sigma2, η, linesearch)
+function spg(x0, f, ∇f, proj, ε, max_iter, lambda_min, lambda_max, M, sigma1, sigma2, gamma, linesearch)
 
     stplen = Float64[];
     fvals = Float64[];
@@ -87,7 +87,7 @@ function spg(x0, f, ∇f, proj, ε, max_iter, lambda_min, lambda_max, M, sigma1,
         end
 
         # Backtrackin routine
-        (x, gradf_x, s, y, f_hist, alpha, et, evalf, evalproj) = linesearch(iter, lambda, x, gradf_x, f_hist, M, sigma1, sigma2, η)
+        (x, gradf_x, s, y, f_hist, alpha, et, evalf, evalproj) = linesearch(iter, lambda, x, gradf_x, f_hist, M, sigma1, sigma2, gamma)
         push!(stplen,alpha)
         push!(feval,evalf)
         push!(projeval,evalproj)
@@ -107,7 +107,7 @@ end
 #
 # Backtrackin routine SPG1
 #
-function spg1(k,lambda_k,x_k,gradf_x_k,f_hist, M, sigma1, sigma2, η)
+function spg1(k,lambda_k,x_k,gradf_x_k,f_hist, M, sigma1, sigma2, gamma)
     alpha = copy(lambda_k)
     t0 = time()
     evalf = 0
@@ -123,7 +123,7 @@ function spg1(k,lambda_k,x_k,gradf_x_k,f_hist, M, sigma1, sigma2, η)
         #f_max = maximum(f_hist[end-m_k:end])
         f_x_plus = f(x_plus)
         evalf += 1  
-        test = f_x_plus > f_max + η * dot(x_plus - x_k,gradf_x_k)
+        test = f_x_plus > f_max + gamma * dot(x_plus - x_k,gradf_x_k)
         if ~test
             s_k = x_plus - x_k
             gradf_x_kp1 = ∇f(x_plus)
@@ -151,7 +151,7 @@ end
 #
 # Backtrackin routine SPG2
 #
-function spg2(k,lambda_k,x_k,gradf_x_k,f_hist, M, sigma1, sigma2, η)
+function spg2(k,lambda_k,x_k,gradf_x_k,f_hist, M, sigma1, sigma2, gamma)
     lambda = copy(lambda_k)
     alpha = 1
     t0 = time()
@@ -165,7 +165,7 @@ function spg2(k,lambda_k,x_k,gradf_x_k,f_hist, M, sigma1, sigma2, η)
         f_max = maximum(f_hist[end-m_k:end])
         f_x_plus = f(x_plus)
         evalf += 1
-        test = f_x_plus > f_max + η * alpha * dot(d_k,gradf_x_k)
+        test = f_x_plus > f_max + gamma * alpha * dot(d_k,gradf_x_k)
         if ~test
             s_k = x_plus - x_k
             gradf_x_kp1 = ∇f(x_plus)
