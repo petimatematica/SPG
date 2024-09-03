@@ -12,7 +12,7 @@ S = Float64[]
 G = Float64[]
 
 # Parameters
-η = 1.e-4 
+gamma = 1.e-4 
 ε = 1.e-5 
 min_step = 1.e-5
 max_iter = 15000
@@ -94,7 +94,7 @@ for B in 1:2
                 return z
             end
 
-            (x,error,info,seqx,et,evalf,evalsproj) = spg(x0, f, ∇f, proj, ε, max_iter, lambda_min, lambda_max, M, sigma1, sigma2, η, linesearch)
+            (x,error,info,seqx,et,evalf,evalsproj) = spg(x0, f, ∇f, proj, ε, max_iter, lambda_min, lambda_max, M, sigma1, sigma2, gamma, linesearch)
 
             filename = "echo/" * problems[ip] * Ls * ".jld2"
             @save filename info 
